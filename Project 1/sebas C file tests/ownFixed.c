@@ -17,6 +17,31 @@ typedef struct
 
 int main()
 {
+  int k;
+  char numberInput[100];
+
+  while (1)
+  {
+    printf("Enter a number for k: ");
+
+    if (fgets(numberInput, sizeof(numberInput), stdin) != NULL)
+    {
+      if (sscanf(numberInput, "%d", &k) == 1)
+      {
+        printf("You chose %d Nodes\n", k);
+        break;
+      }
+      else
+      {
+        printf("Invalid input. Please enter a valid k.\n");
+      }
+    }
+    else
+    {
+      fprintf(stderr, "fgets failure: Invalid k number");
+      exit(1);
+    }
+  }
 
   // Create pipes for communication
   for (int i = 0; i < 3; i++)
@@ -72,7 +97,7 @@ int main()
 
   Message msgFirst;
   strncpy(msgFirst.message, input, sizeof(msgFirst.message));
-  write(pipes[0][1], &msgFirst, sizeof(msgFirst));
+  write(pipes[2][1], &msgFirst, sizeof(msgFirst));
   pause();
 
   return 0;
