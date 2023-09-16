@@ -3,19 +3,19 @@
 #include <unistd.h>
 #include <signal.h>
 
-void sigusr1Handler (int);
-void sigusr2Handler (int);
-void sigHandler (int);
+void sigusr1Handler(int);
+void sigusr2Handler(int);
+void sigHandler(int);
 
 int main()
 {
     int pid = fork(); // Spawn child process
-    if (pid < 0) // Fork failed
+    if (pid < 0)      // Fork failed
     {
         perror("Fork failed");
         exit(1);
     }
-    
+
     if (pid == 0)
     { // Child process
         printf("spawned child PID# %d\n", getpid());
@@ -33,13 +33,14 @@ int main()
         }
     }
     else
-    { // Parent process
+    {                                    // Parent process
         signal(SIGUSR1, sigusr1Handler); // Install handlers
         signal(SIGUSR2, sigusr2Handler);
         signal(SIGINT, sigHandler);
 
         usleep(500000);
-        while (1) {
+        while (1)
+        {
             printf("Waiting...\t");
             fflush(stdout);
             pause();
@@ -48,11 +49,13 @@ int main()
     return 0;
 }
 
-void sigusr1Handler(int sigNum) {
+void sigusr1Handler(int sigNum)
+{
     printf("received a SIGUSR1 signal.\n");
 }
 
-void sigusr2Handler(int sigNum) {
+void sigusr2Handler(int sigNum)
+{
     printf("received a SIGUSR2 signal.\n");
 }
 

@@ -7,11 +7,10 @@
 #include <sys/wait.h>
 #include <sys/resource.h>
 
-
 int main()
 {
     char input[1024];
-    while(1)
+    while (1)
     {
         printf("Enter a command (or 'quit' to exit): ");
         if (fgets(input, sizeof(input), stdin) == NULL)
@@ -20,7 +19,7 @@ int main()
             exit(1);
         }
         input[strcspn(input, "\n")] = '\0';
-        
+
         if (strcmp(input, "quit") == 0)
         {
             break;
@@ -52,7 +51,7 @@ int main()
         else
         {
             child = wait(&status);
-            printf("\nChild PID %ld terminated with return status %d\n", (long) child, status);
+            printf("\nChild PID %ld terminated with return status %d\n", (long)child, status);
 
             struct rusage usage;
             if (getrusage(RUSAGE_CHILDREN, &usage) == 0)
@@ -66,7 +65,6 @@ int main()
                 exit(1);
             }
         }
-
     }
     return 0;
 }
