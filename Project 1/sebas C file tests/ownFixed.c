@@ -8,32 +8,31 @@
 void sigHandler(int);
 int pids[3];
 int pipes[3][2];
+int k;
 
 typedef struct
 {
-  int sender;
+  int target;
   char message[256];
 } Message;
 
 int main()
 {
-  int k;
-  char numberInput[100];
-
+  // Set k value
+  char kInput[100];
   while (1)
   {
     printf("Enter a number for k: ");
 
-    if (fgets(numberInput, sizeof(numberInput), stdin) != NULL)
+    if (fgets(kInput, sizeof(kInput), stdin) != NULL)
     {
-      if (sscanf(numberInput, "%d", &k) == 1)
+      if (sscanf(kInput, "%d", &k) == 1 && k == 3)
       {
-        printf("You chose %d Nodes\n", k);
         break;
       }
       else
       {
-        printf("Invalid input. Please enter a valid k.\n");
+        printf("Invalid input. Please enter a 3 for k.\n");
       }
     }
     else
@@ -53,6 +52,7 @@ int main()
     }
   }
 
+  // Spawn child processes
   for (int i = 0; i < 3; i++)
   {
     int pid = fork();
@@ -68,15 +68,23 @@ int main()
         Message msgBuffer;
         close(pipes[(i + 2) % 3][1]);
         read(pipes[(i + 2) % 3][0], &msgBuffer, sizeof(msgBuffer));
-        printf("Node %d received [%s] from %d\n", i, msgBuffer.message, (i + 2) % 3);
-        sleep(2);
+        printf("Node %d received a message.\n", i);
+        if (msgBuffer.target == i)
+        {
+          printf("The message was for me! It says [%s].\n", msgBuffer.message);
+        }
+        else
+        {
+          printf("The message was not for me!\n");
+        }
 
+        sleep(2);
         Message msg;
         strncpy(msg.message, msgBuffer.message, sizeof(msg.message));
-
+        msg.target = msgBuffer.target;
         close(pipes[i][0]);
         write(pipes[i][1], &msg, sizeof(msg));
-        printf("Node %d wrote [%s] to %d\n", i, msg.message, (i + 1) % 3);
+        printf("Node %d sent the message.\n", i);
       }
     }
     else
@@ -84,20 +92,47 @@ int main()
       pids[i] = pid;
     }
   }
+
   signal(SIGINT, sigHandler);
 
-  char input[256];
+  Message msgFirst;
+  char msgInput[256];
+  char nodeInput[100];
+  int node;
   printf("Enter a message: ");
-  if (fgets(input, sizeof(input), stdin) == NULL)
+  if (fgets(msgInput, sizeof(msgInput), stdin) == NULL)
   {
     fprintf(stderr, "Fgets failure: %s", strerror(errno));
     exit(1);
   }
-  input[strcspn(input, "\n")] = '\0';
+  msgInput[strcspn(msgInput, "\n")] = '\0';
+  strncpy(msgFirst.message, msgInput, sizeof(msgFirst.message));
 
-  Message msgFirst;
-  strncpy(msgFirst.message, input, sizeof(msgFirst.message));
+  while (1)
+  {
+    printf("What node to send the message to: ");
+
+    if (fgets(nodeInput, sizeof(nodeInput), stdin) != NULL)
+    {
+      if (sscanf(nodeInput, "%d", &node) == 1 && node > -1 && node < 3)
+      {
+        msgFirst.target = node;
+        break;
+      }
+      else
+      {
+        printf("Invalid input. Please enter 0, 1, or 2 for a node.\n");
+      }
+    }
+    else
+    {
+      fprintf(stderr, "fgets failure: Invalid node number");
+      exit(1);
+    }
+  }
+
   write(pipes[2][1], &msgFirst, sizeof(msgFirst));
+  printf("Parent sent the message to node 0.\nMessage [%s]\nTarget [%d]\n", msgFirst.message, msgFirst.target);
   pause();
 
   return 0;

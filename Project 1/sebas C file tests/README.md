@@ -10,6 +10,7 @@ To implement the "One Bad Apple" communication system in C, you can follow the f
    - In the parent process, prompt the user for the value of k (the number of nodes).
    - Create k child processes using `fork()` and store their process IDs.
    - Set up communication pipes between adjacent processes for message passing.
+   - Give the msgBuffer and msg a sender value in child process.
 
 3. **Implement the Bad Apple (Extra Credit):**
 
