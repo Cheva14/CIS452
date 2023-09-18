@@ -9,7 +9,7 @@
 **Process Management:**
 
 - [ ] Prompt the user for the value of 'k' (the number of processes).
-- [ ] Create 'k' child processes using `fork()` and set up the circular ring structure.
+- [ ] Create 'k-1' child processes using `fork()` and set up the circular ring structure.
 - [ ] Handle the case where 'k' processes form the ring, with each having a read and write connection to its neighbors.
 - [ ] Implement a method for gracefully shutting down the simulation when the user presses Control-C using signal handling (`signal()` function).
 
@@ -25,7 +25,7 @@
 
 **User Input:**
 
-- [ ] Prompt the user for a message to send and the node to send it to.
+- [ ] Prompt the user for a message to send and the node target.
 - [ ] Handle user input validation.
 
 **Verbose Logging:**
