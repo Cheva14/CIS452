@@ -4,8 +4,10 @@
 #include <string.h>
 #include <signal.h>
 #include <errno.h>
+#include <time.h>
 
 void sigHandler(int);
+int getBadApple(int);
 int k;
 typedef struct
 {
@@ -38,6 +40,10 @@ int main()
       exit(1);
     }
   }
+
+  // Choose a node to be the bad apple
+  int badApple = getBadApple(k);
+  printf("Node %d is the bad apple\n", badApple);
 
   // Create pipes for communication
   int pipes[k][2];
@@ -76,8 +82,27 @@ int main()
         {
           printf("The message was not for me!\n");
         }
+        if (i == badApple)
+        {
+          // Calculate the number of characters to replace as half the length of msgBuffer.message
+          printf("I am the bad apple\n");
 
-        sleep(2);
+          int numCharsToReplace = strlen(msgBuffer.message) / 5;
+          // Check that numCharsToReplace is greater than 0 to avoid issues
+          if (numCharsToReplace > 0)
+          {
+            srand(time(NULL)); // Initialize the random number generator
+
+            for (int j = 0; j < numCharsToReplace; j++)
+            {
+              // Generate a random character and replace it in msg.message
+              char randomChar = 'A' + (rand() % 26); // Replace with the desired character range
+              int randomIndex = rand() % strlen(msgBuffer.message);
+              msgBuffer.message[randomIndex] = randomChar;
+            }
+          }
+        }
+        sleep(1);
         Message msg;
         strncpy(msg.message, msgBuffer.message, sizeof(msg.message));
         msg.target = msgBuffer.target;
@@ -106,7 +131,7 @@ int main()
   msgInput[strcspn(msgInput, "\n")] = '\0';
   strncpy(msgFirst.message, msgInput, sizeof(msgFirst.message));
 
-  // Get mode target
+  // Get node target
   char nodeInput[100];
   int node;
   while (1)
@@ -152,10 +177,35 @@ int main()
     {
       printf("The message was not for me!\n");
     }
+    if (0 == badApple)
+    {
+      // Calculate the number of characters to replace as half the length of msgBuffer.message
+      printf("I am the bad apple");
 
-    sleep(2);
+      int numCharsToReplace = strlen(msgBuffer.message) / 5;
+
+      // Check that numCharsToReplace is greater than 0 to avoid issues
+      if (numCharsToReplace > 0)
+      {
+        srand(time(NULL)); // Initialize the random number generator
+
+        for (int j = 0; j < numCharsToReplace; j++)
+        {
+          // Generate a random character and replace it in msg.message
+          char randomChar = 'A' + (rand() % 26); // Replace with the desired character range
+          int randomIndex = rand() % strlen(msgBuffer.message);
+          msgBuffer.message[randomIndex] = randomChar;
+        }
+      }
+    }
+
+    sleep(1);
     Message msg;
     strncpy(msg.message, msgBuffer.message, sizeof(msg.message));
+    if (0 == badApple)
+    {
+      printf("%s].\n", msg.message);
+    }
     msg.target = msgBuffer.target;
     close(pipes[0][0]);
     write(pipes[0][1], &msg, sizeof(msg));
@@ -183,4 +233,17 @@ void sigHandler(int sigNum)
   // sleep(5);
   // printf("That's it, I'm shutting you down...\n");
   exit(0);
+}
+
+// Function to generate a random number between 0 and 5 (inclusive)
+int getBadApple(int k)
+{
+  // Seed the random number generator with the current time
+  srand(time(NULL));
+
+  // Generate a random number between 0 and RAND_MAX
+  int randomNumber = rand();
+
+  // Use modulo to restrict the range to 0-5
+  return randomNumber % k;
 }

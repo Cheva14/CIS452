@@ -1,0 +1,120 @@
+seabass@Sebastians-MacBook-Air sebas C file tests % ./a                
+Enter a number for k: 3
+Node 1 is the bad apple
+Enter a message: HelloWorld
+What node to send the message to: 0
+Parent sent the message to node 0.
+Message [HelloWorld]
+Target [0]
+Node 0 received a message.
+The message was for me! It says [HelloWorld].
+Node 0 sent the message.
+Node 1 received a message.
+The message was not for me!
+I am the bad apple, Before [HelloWorld]
+5
+U
+240
+HelloWorld
+K
+45
+HelloWorld
+R
+2
+HeRloWorld
+E
+226
+HeRloWorld
+M
+193
+HeRloWorld
+After: [HeRloWorld]
+Node 1 sent the message.
+Node 2 received a message.
+The message was not for me!
+Node 2 sent the message.
+Node 0 received a message.
+The message was for me! It says [HeRloWorld].
+Node 0 sent the message.
+Node 1 received a message.
+The message was not for me!
+I am the bad apple, Before [HeRloWorld]
+5
+B
+195
+HeRloWorld
+F
+172
+HeRloWorld
+T
+90
+HeRloWorld
+M
+222
+HeRloWorld
+H
+171
+HeRloWorld
+After: [HeRloWorld]
+Node 1 sent the message.
+Node 2 received a message.
+The message was not for me!
+Node 2 sent the message.
+Node 0 received a message.
+The message was for me! It says [HeRloWorld].
+Node 0 sent the message.
+Node 1 received a message.
+The message was not for me!
+I am the bad apple, Before [HeRloWorld]
+5
+I
+151
+HeRloWorld
+D
+44
+HeRloWorld
+S
+179
+HeRloWorld
+U
+218
+HeRloWorld
+C
+149
+HeRloWorld
+After: [HeRloWorld]
+Node 1 sent the message.
+Node 2 received a message.
+The message was not for me!
+Node 2 sent the message.
+Node 0 received a message.
+The message was for me! It says [HeRloWorld].
+Node 0 sent the message.
+Node 1 received a message.
+The message was not for me!
+I am the bad apple, Before [HeRloWorld]
+5
+P
+106
+HeRloWorld
+Y
+171
+HeRloWorld
+U
+12
+HeRloWorld
+C
+214
+HeRloWorld
+X
+127
+HeRloWorld
+After: [HeRloWorld]
+Node 1 sent the message.
+Node 2 received a message.
+The message was not for me!
+Node 2 sent the message.
+Node 0 received a message.
+The message was for me! It says [HeRloWorld].
+^C%                                                                                                                                                                                                        
+seabass@Sebastians-MacBook-Air sebas C file tests % 

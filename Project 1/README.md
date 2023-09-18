@@ -37,9 +37,9 @@
 **Additional Features:**
 
 - [x] Handle messages of more than one word.
-- [ ] Implement the "bad apple" feature if extra credit is desired:
-  - [ ] Assign one of the nodes as the "bad apple."
-  - [ ] Modify the "bad apple" process to replace some data with random data before sending it.
+- [x] Implement the "bad apple" feature if extra credit is desired:
+  - [x] Assign one of the nodes as the "bad apple."
+  - [x] Modify the "bad apple" process to replace some data with random data before sending it.
 
 **Code Quality and Documentation:**
 
