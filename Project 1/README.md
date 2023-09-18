@@ -8,10 +8,9 @@
 
 **Process Management:**
 
-- [ ] Prompt the user for the value of 'k' (the number of processes).
-- [ ] Create 'k-1' child processes using `fork()` and set up the circular ring structure.
-- [ ] Handle the case where 'k' processes form the ring, with each having a read and write connection to its neighbors.
-- [ ] Implement a method for gracefully shutting down the simulation when the user presses Control-C using signal handling (`signal()` function).
+- [x] Prompt the user for the value of 'k' (the number of processes).
+- [x] Create 'k-1' child processes using `fork()` and set up the circular ring structure.
+- [x] Implement a method for gracefully shutting down the simulation when the user presses Control-C using signal handling (`signal()` function).
 
 **Message Passing:**
 
@@ -20,19 +19,19 @@
 - [ ] Implement logic for receiving and processing messages:
   - [ ] Each process should check if it has the apple.
   - [ ] If it has the apple, check if the message is intended for it.
-  - [ ] If the message is intended for the process, copy and process it.
-  - [ ] If the message is not intended for the process, send it to the next node with a small delay (without using `sleep`).
+  - [x] If the message is intended for the process, copy and process it.
+  - [x] If the message is not intended for the process, send it to the next node with a small delay (without using `sleep`).
 
 **User Input:**
 
-- [ ] Prompt the user for a message to send and the node target.
-- [ ] Handle user input validation.
+- [x] Prompt the user for a message to send and the node target.
+- [x] Handle user input validation.
 
 **Verbose Logging:**
 
-- [ ] Implement verbose diagnostic messages throughout the program to track the flow of data and events.
+- [x] Implement verbose diagnostic messages throughout the program to track the flow of data and events.
   - [x] Display information about which process is sending/receiving data.
-  - [x] Indicate the direction of data transfer.
+  - [] Indicate the direction of data transfer.
   - [x] Log process creation/closure events, etc.
 
 **Additional Features:**
