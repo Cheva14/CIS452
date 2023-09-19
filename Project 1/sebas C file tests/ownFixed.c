@@ -9,6 +9,7 @@
 void sigHandler(int);
 int getBadApple(int);
 int k;
+int badApple;
 typedef struct
 {
   int target;
@@ -42,7 +43,30 @@ int main()
   }
 
   // Choose a node to be the bad apple
-  int badApple = getBadApple(k);
+
+  char badAppleInput[256];
+  while (1)
+  {
+    printf("Choose a node to be the bad apple (type -1 if you dont want a bad apple.): ");
+
+    if (fgets(badAppleInput, sizeof(badAppleInput), stdin) != NULL)
+    {
+      if (sscanf(badAppleInput, "%d", &badApple) == 1 && badApple > -2 && badApple < k)
+      {
+
+        break;
+      }
+      else
+      {
+        printf("Invalid input. Please enter a 3 for k.\n");
+      }
+    }
+    else
+    {
+      fprintf(stderr, "fgets failure: Invalid bad apple node");
+      exit(1);
+    }
+  }
   printf("Node %d is the bad apple\n", badApple);
 
   // Create pipes for communication
@@ -58,6 +82,7 @@ int main()
 
   // Spawn child processes
   int pids[k];
+
   for (int i = 1; i < k; i++)
   {
     int pid = fork();
@@ -77,6 +102,7 @@ int main()
         if (msgBuffer.target == i)
         {
           printf("The message was for me! It says [%s].\n", msgBuffer.message);
+          msgBuffer.target = -1;
         }
         else
         {
@@ -87,7 +113,7 @@ int main()
           // Calculate the number of characters to replace as half the length of msgBuffer.message
           printf("I am the bad apple\n");
 
-          int numCharsToReplace = strlen(msgBuffer.message) / 5;
+          int numCharsToReplace = (strlen(msgBuffer.message) / 5) + 1;
           // Check that numCharsToReplace is greater than 0 to avoid issues
           if (numCharsToReplace > 0)
           {
@@ -159,7 +185,7 @@ int main()
 
   // Write the message into the first node
   write(pipes[k - 1][1], &msgFirst, sizeof(msgFirst));
-  printf("Parent sent the message to node 0.\nMessage [%s]\nTarget [%d]\n", msgFirst.message, msgFirst.target);
+  printf("Parent sent the message to node 0.\n");
 
   // Node #0
   while (1)
@@ -168,10 +194,48 @@ int main()
     close(pipes[(0 + (k - 1)) % k][1]);
     read(pipes[(0 + (k - 1)) % k][0], &msgBuffer, sizeof(msgBuffer));
     printf("Node %d received a message.\n", 0);
+    if (msgBuffer.target == -1)
+    {
+      printf("apple has header empty. Restarting...\n");
+      // Get message
+      printf("Enter a message: ");
+      if (fgets(msgInput, sizeof(msgInput), stdin) == NULL)
+      {
+        fprintf(stderr, "Fgets failure: %s", strerror(errno));
+        exit(1);
+      }
+      msgInput[strcspn(msgInput, "\n")] = '\0';
+      strncpy(msgBuffer.message, msgInput, sizeof(msgBuffer.message));
 
+      // Get node target
+      while (1)
+      {
+        printf("What node to send the message to: ");
+
+        if (fgets(nodeInput, sizeof(nodeInput), stdin) != NULL)
+        {
+          if (sscanf(nodeInput, "%d", &node) == 1 && node > -1 && node < k)
+          {
+            msgBuffer.target = node;
+            break;
+          }
+          else
+          {
+            printf("Invalid input. Please enter 0, 1, or 2 for a node.\n");
+          }
+        }
+        else
+        {
+          fprintf(stderr, "fgets failure: Invalid node number");
+          exit(1);
+        }
+      }
+      printf("Node %d received a message.\n", 0);
+    }
     if (msgBuffer.target == 0)
     {
       printf("The message was for me! It says [%s].\n", msgBuffer.message);
+      msgBuffer.target = -1;
     }
     else
     {
@@ -202,10 +266,6 @@ int main()
     sleep(1);
     Message msg;
     strncpy(msg.message, msgBuffer.message, sizeof(msg.message));
-    if (0 == badApple)
-    {
-      printf("%s].\n", msg.message);
-    }
     msg.target = msgBuffer.target;
     close(pipes[0][0]);
     write(pipes[0][1], &msg, sizeof(msg));
@@ -233,17 +293,4 @@ void sigHandler(int sigNum)
   // sleep(5);
   // printf("That's it, I'm shutting you down...\n");
   exit(0);
-}
-
-// Function to generate a random number between 0 and 5 (inclusive)
-int getBadApple(int k)
-{
-  // Seed the random number generator with the current time
-  srand(time(NULL));
-
-  // Generate a random number between 0 and RAND_MAX
-  int randomNumber = rand();
-
-  // Use modulo to restrict the range to 0-5
-  return randomNumber % k;
 }
