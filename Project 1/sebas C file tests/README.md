@@ -53,6 +53,6 @@ To implement the "One Bad Apple" communication system in C, you can follow the f
 
 Remember to use descriptive variable names following the camelCase convention, and try to make the code self-documenting with clear, concise comments only when necessary. Your code should be well-organized and modular, with each part responsible for a specific task in the communication system.
 
-Change variable names to use apple terms.
-check print text
 check how to clean
+
+if the target is the bad apple, should it change the data before printing the message?

@@ -7,14 +7,13 @@
 #include <time.h>
 
 void sigHandler(int);
-int getBadApple(int);
 int k;
 int badApple;
 typedef struct
 {
-  int target;
+  int header;
   char message[256];
-} Message;
+} Apple;
 
 int main()
 {
@@ -32,7 +31,7 @@ int main()
       }
       else
       {
-        printf("Invalid input. Please enter a 3 for k.\n");
+        printf("Invalid input. Please enter a natural number greater than 2 for k.\n");
       }
     }
     else
@@ -43,7 +42,6 @@ int main()
   }
 
   // Choose a node to be the bad apple
-
   char badAppleInput[256];
   while (1)
   {
@@ -58,7 +56,7 @@ int main()
       }
       else
       {
-        printf("Invalid input. Please enter a 3 for k.\n");
+        printf("Invalid input. Please enter a number between -1 and %d.\n", k - 1);
       }
     }
     else
@@ -67,7 +65,6 @@ int main()
       exit(1);
     }
   }
-  printf("Node %d is the bad apple\n", badApple);
 
   // Create pipes for communication
   int pipes[k][2];
@@ -95,14 +92,14 @@ int main()
     { // Node #i
       while (1)
       {
-        Message msgBuffer;
-        close(pipes[(i + (k - 1)) % k][1]);
-        read(pipes[(i + (k - 1)) % k][0], &msgBuffer, sizeof(msgBuffer));
-        printf("Node %d received a message.\n", i);
-        if (msgBuffer.target == i)
+        Apple appleBuffer;
+        close(pipes[(i + k - 1) % k][1]);
+        read(pipes[(i + k - 1) % k][0], &appleBuffer, sizeof(appleBuffer));
+        printf("Node %d received the apple.\n", i);
+        if (appleBuffer.header == i)
         {
-          printf("The message was for me! It says [%s].\n", msgBuffer.message);
-          msgBuffer.target = -1;
+          printf("The message was for me! It says [%s].\n", appleBuffer.message);
+          appleBuffer.header = -1;
         }
         else
         {
@@ -110,10 +107,10 @@ int main()
         }
         if (i == badApple)
         {
-          // Calculate the number of characters to replace as half the length of msgBuffer.message
+          // Calculate the number of characters to replace as half the length of appleBuffer.message
           printf("I am the bad apple\n");
 
-          int numCharsToReplace = (strlen(msgBuffer.message) / 5) + 1;
+          int numCharsToReplace = (strlen(appleBuffer.message) / 5) + 1;
           // Check that numCharsToReplace is greater than 0 to avoid issues
           if (numCharsToReplace > 0)
           {
@@ -122,19 +119,16 @@ int main()
             for (int j = 0; j < numCharsToReplace; j++)
             {
               // Generate a random character and replace it in msg.message
-              char randomChar = 'A' + (rand() % 26); // Replace with the desired character range
-              int randomIndex = rand() % strlen(msgBuffer.message);
-              msgBuffer.message[randomIndex] = randomChar;
+              char randomChar = 'a' + (rand() % 26); // Replace with the desired character range
+              int randomIndex = rand() % strlen(appleBuffer.message);
+              appleBuffer.message[randomIndex] = randomChar;
             }
           }
         }
         sleep(1);
-        Message msg;
-        strncpy(msg.message, msgBuffer.message, sizeof(msg.message));
-        msg.target = msgBuffer.target;
         close(pipes[i][0]);
-        write(pipes[i][1], &msg, sizeof(msg));
-        printf("Node %d sent the message.\n", i);
+        write(pipes[i][1], &appleBuffer, sizeof(appleBuffer));
+        printf("Node %d sent the apple.\n", i);
       }
     }
     else
@@ -146,7 +140,7 @@ int main()
   signal(SIGINT, sigHandler);
 
   // Get message
-  Message msgFirst;
+  Apple msgFirst;
   char msgInput[256];
   printf("Enter a message: ");
   if (fgets(msgInput, sizeof(msgInput), stdin) == NULL)
@@ -157,7 +151,7 @@ int main()
   msgInput[strcspn(msgInput, "\n")] = '\0';
   strncpy(msgFirst.message, msgInput, sizeof(msgFirst.message));
 
-  // Get node target
+  // Get node header
   char nodeInput[100];
   int node;
   while (1)
@@ -168,12 +162,12 @@ int main()
     {
       if (sscanf(nodeInput, "%d", &node) == 1 && node > -1 && node < k)
       {
-        msgFirst.target = node;
+        msgFirst.header = node;
         break;
       }
       else
       {
-        printf("Invalid input. Please enter 0, 1, or 2 for a node.\n");
+        printf("Invalid input. Please enter a number between 0 and %d.\n", k - 1);
       }
     }
     else
@@ -185,16 +179,15 @@ int main()
 
   // Write the message into the first node
   write(pipes[k - 1][1], &msgFirst, sizeof(msgFirst));
-  printf("Parent sent the message to node 0.\n");
 
   // Node #0
   while (1)
   {
-    Message msgBuffer;
+    Apple appleBuffer;
     close(pipes[(0 + (k - 1)) % k][1]);
-    read(pipes[(0 + (k - 1)) % k][0], &msgBuffer, sizeof(msgBuffer));
-    printf("Node %d received a message.\n", 0);
-    if (msgBuffer.target == -1)
+    read(pipes[(0 + (k - 1)) % k][0], &appleBuffer, sizeof(appleBuffer));
+    printf("Node %d received the apple.\n", 0);
+    if (appleBuffer.header == -1)
     {
       printf("apple has header empty. Restarting...\n");
       // Get message
@@ -205,9 +198,9 @@ int main()
         exit(1);
       }
       msgInput[strcspn(msgInput, "\n")] = '\0';
-      strncpy(msgBuffer.message, msgInput, sizeof(msgBuffer.message));
+      strncpy(appleBuffer.message, msgInput, sizeof(appleBuffer.message));
 
-      // Get node target
+      // Get node header
       while (1)
       {
         printf("What node to send the message to: ");
@@ -216,12 +209,12 @@ int main()
         {
           if (sscanf(nodeInput, "%d", &node) == 1 && node > -1 && node < k)
           {
-            msgBuffer.target = node;
+            appleBuffer.header = node;
             break;
           }
           else
           {
-            printf("Invalid input. Please enter 0, 1, or 2 for a node.\n");
+            printf("Invalid input. Please enter a number between 0 and %d.\n", k - 1);
           }
         }
         else
@@ -230,12 +223,12 @@ int main()
           exit(1);
         }
       }
-      printf("Node %d received a message.\n", 0);
+      printf("Node %d received the apple.\n", 0);
     }
-    if (msgBuffer.target == 0)
+    if (appleBuffer.header == 0)
     {
-      printf("The message was for me! It says [%s].\n", msgBuffer.message);
-      msgBuffer.target = -1;
+      printf("The message was for me! It says [%s].\n", appleBuffer.message);
+      appleBuffer.header = -1;
     }
     else
     {
@@ -243,10 +236,10 @@ int main()
     }
     if (0 == badApple)
     {
-      // Calculate the number of characters to replace as half the length of msgBuffer.message
-      printf("I am the bad apple");
+      // Calculate the number of characters to replace as half the length of appleBuffer.message
+      printf("I am the bad apple\n");
 
-      int numCharsToReplace = strlen(msgBuffer.message) / 5;
+      int numCharsToReplace = strlen(appleBuffer.message) / 5 + 1;
 
       // Check that numCharsToReplace is greater than 0 to avoid issues
       if (numCharsToReplace > 0)
@@ -257,19 +250,16 @@ int main()
         {
           // Generate a random character and replace it in msg.message
           char randomChar = 'A' + (rand() % 26); // Replace with the desired character range
-          int randomIndex = rand() % strlen(msgBuffer.message);
-          msgBuffer.message[randomIndex] = randomChar;
+          int randomIndex = rand() % strlen(appleBuffer.message);
+          appleBuffer.message[randomIndex] = randomChar;
         }
       }
     }
 
     sleep(1);
-    Message msg;
-    strncpy(msg.message, msgBuffer.message, sizeof(msg.message));
-    msg.target = msgBuffer.target;
     close(pipes[0][0]);
-    write(pipes[0][1], &msg, sizeof(msg));
-    printf("Node 0 sent the message.\n");
+    write(pipes[0][1], &appleBuffer, sizeof(appleBuffer));
+    printf("Node 0 sent the apple.\n");
   }
 
   return 0;
@@ -286,11 +276,11 @@ void sigHandler(int sigNum)
   //   // close(pipes[i][1]);
   // }
   // // for (int i = 1; i < k; i++)
-  // // {
+  // //
   // //   printf("Node %d is shutting down.\n", i);
   // //   kill(pids[i], SIGINT);
   // // }
   // sleep(5);
-  // printf("That's it, I'm shutting you down...\n");
+  printf(" received. That's it, I'm shutting you down...\n");
   exit(0);
 }
