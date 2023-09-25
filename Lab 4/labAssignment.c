@@ -67,8 +67,7 @@ void *createWorker(void *filename)
 
 void SIGINT_handler(int signum)
 {
-  printf(" received. The program will now wait for any remaining worker threads and in progress inputs requests to finish and will then shut down.\n");
-  // If there are any executing ‘file requests’ those should complete before printing the following two printf lines and exitting the program.
+  printf(" received. Program waiting for remaining tasks to finish before shutting down.\n");
   printf("Total number of file requests received: %d\n", total_requests);
   pthread_exit(0);
 }
