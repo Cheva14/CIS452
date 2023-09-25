@@ -6,20 +6,28 @@
 #include <unistd.h>
 #include <signal.h>
 #include <time.h>
+#include <semaphore.h> // Include the semaphore header
 
 void *createWorker(void *arg);
 void SIGINT_handler(int signum);
 int total_requests = 0;
+sem_t request_semaphore; // Declare a semaphore
 
 int main()
 {
   signal(SIGINT, SIGINT_handler);
   srand(time(NULL));
 
+  // Initialize the semaphore
+  if (sem_init(&request_semaphore, 0, 0) != 0)
+  {
+    perror("Semaphore initialization failed");
+    exit(1);
+  }
   while (1)
   {
     char input[256];
-    printf("Enter a filename (or press Ctrl+C to exit): ");
+    printf("Please input a file name: ");
     fgets(input, sizeof(input), stdin);
     input[strcspn(input, "\n")] = '\0';
 
@@ -43,6 +51,13 @@ int main()
     }
 
     total_requests++;
+
+    // Increment the semaphore to indicate a new request
+    if (sem_post(&request_semaphore) != 0)
+    {
+      perror("Semaphore post error");
+      exit(1);
+    }
   }
 }
 
@@ -60,15 +75,38 @@ void *createWorker(void *filename)
     sleep(time);
   }
 
-  printf("\nAccessed file [%s]\n", file);
+  printf("\nWorker accessed the file: %s\n", file);
   free(filename);
+
+  // Decrement the semaphore to indicate request completion
+  if (sem_wait(&request_semaphore) != 0)
+  {
+    perror("Semaphore wait error");
+    exit(1);
+  }
   pthread_exit(0);
 }
 
 void SIGINT_handler(int signum)
 {
-  printf(" received. The program will now wait for any remaining worker threads and in progress inputs requests to finish and will then shut down.\n");
-  // If there are any executing ‘file requests’ those should complete before printing the following two printf lines and exitting the program.
+  printf(" received. The program will now wait for any remaining worker threads and in-progress input requests to finish and will then shut down.\n");
+
+  // Wait until all requests are completed
+  printf("one%d\n", total_requests);
+  while (total_requests > 0)
+  {
+    printf("midone%d\n", total_requests);
+    sleep(1); // Sleep for a second and check again
+    printf("midtwo%d\n", total_requests);
+  }
+  printf("two%d\n", total_requests);
+
+  // Print the final information
   printf("Total number of file requests received: %d\n", total_requests);
-  pthread_exit(0);
+  printf("All worker threads have completed. Shutting down...\n");
+
+  // Clean up the semaphore
+  sem_destroy(&request_semaphore);
+
+  exit(0);
 }

@@ -20,6 +20,7 @@ int main()
     fprintf(stderr, "Thread create error %d: %s\n", threadStatus, strerror(threadStatus));
     exit(1);
   }
+  sleep(2);
   return 0;
 }
 
