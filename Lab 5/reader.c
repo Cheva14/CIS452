@@ -11,7 +11,7 @@
 void sigint_handler(int);
 
 int shmId;
-char *sharedMemoryPtr;
+void *sharedMemoryPtr;
 
 int main()
 {
@@ -35,11 +35,20 @@ int main()
     exit(1);
   }
 
+  int *newStringFlag = (int *)sharedMemoryPtr;
   while (1)
   {
-    sleep(2);
+
+    while (*newStringFlag <= 0)
+    {
+      usleep(10000);
+    }
     char *newString = sharedMemoryPtr + sizeof(int);
     printf("Reader: %s\n", newString);
+
+    // Reset the flag
+    (*newStringFlag)--;
+    usleep(10000);
   }
 
   if (shmdt(sharedMemoryPtr) < 0)

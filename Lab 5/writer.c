@@ -12,7 +12,7 @@
 void sigint_handler(int);
 
 int shmId;
-char *sharedMemoryPtr;
+void *sharedMemoryPtr;
 
 int main()
 {
@@ -36,15 +36,24 @@ int main()
     exit(1);
   }
 
+  // Pointer to the flag indicating if a new string is available
+  int *newStringFlag = (int *)sharedMemoryPtr;
+
   while (1)
   {
+    while (*newStringFlag > 0)
+    {
+      usleep(10000);
+    }
+
     printf("Enter a string (or 'quit' to exit): ");
-    char input[256];
-    fgets(input, 256, stdin);
+    char input[100];
+    fgets(input, 100, stdin);
     input[strlen(input) - 1] = '\0';
     if (strcmp(input, "quit") == 0)
       break;
-    strcpy(sharedMemoryPtr + sizeof(int), input);
+    *newStringFlag = 2;
+    strcpy((char *)sharedMemoryPtr + sizeof(int), input);
   }
 
   if (shmdt(sharedMemoryPtr) < 0)
