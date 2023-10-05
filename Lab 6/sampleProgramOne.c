@@ -6,8 +6,11 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
+#include <sys/sem.h>
 
 #define SIZE 16
+struct sembuf p = {0, -1, SEM_UNDO};
+struct sembuf v = {0, +1, SEM_UNDO};
 
 int main(int argc, char *argv[])
 {
@@ -15,6 +18,7 @@ int main(int argc, char *argv[])
   long int i, loop, temp, *sharedMemoryPointer;
   int sharedMemoryID;
   pid_t pid;
+  int semId;
 
   loop = atoi(argv[1]);
 
@@ -35,6 +39,20 @@ int main(int argc, char *argv[])
   sharedMemoryPointer[0] = 0;
   sharedMemoryPointer[1] = 1;
 
+  // Create a semaphore
+  if ((semId = semget(IPC_PRIVATE, 1, S_IRUSR | S_IWUSR)) == -1)
+  {
+    perror("semget: semget failed");
+    exit(1);
+  }
+
+  // Initialize the semaphore
+  if (semop(semId, &v, 1) == -1)
+  {
+    perror("semop: semop initialization failed");
+    exit(1);
+  }
+
   pid = fork();
   if (pid < 0)
   {
@@ -42,10 +60,18 @@ int main(int argc, char *argv[])
   }
 
   if (pid == 0)
-  { // Child
+  {
+    // Child
+
     for (i = 0; i < loop; i++)
     {
-      // swap the contents of sharedMemoryPointer[0] and sharedMemoryPointer[1]
+      semop(semId, &p, 1); // Wait (lock) the semaphore
+
+      temp = sharedMemoryPointer[0];
+      sharedMemoryPointer[0] = sharedMemoryPointer[1];
+      sharedMemoryPointer[1] = temp;
+
+      semop(semId, &v, 1); // Release (unlock) the semaphore
     }
     if (shmdt(sharedMemoryPointer) < 0)
     {
@@ -55,10 +81,19 @@ int main(int argc, char *argv[])
     exit(0);
   }
   else
+  {
+
     for (i = 0; i < loop; i++)
     {
-      // swap the contents of sharedMemoryPointer[1] and sharedMemoryPointer[0]
+      semop(semId, &p, 1); // Wait (lock) the semaphore
+
+      temp = sharedMemoryPointer[1];
+      sharedMemoryPointer[1] = sharedMemoryPointer[0];
+      sharedMemoryPointer[0] = temp;
+
+      semop(semId, &v, 1); // Release (unlock) the semaphore
     }
+  }
 
   wait(&status);
   printf("Values: %li\t%li\n", sharedMemoryPointer[0], sharedMemoryPointer[1]);
@@ -71,6 +106,12 @@ int main(int argc, char *argv[])
   if (shmctl(sharedMemoryID, IPC_RMID, 0) < 0)
   {
     perror("Unable to deallocate\n");
+    exit(1);
+  }
+
+  if (semctl(semId, 0, IPC_RMID) == -1)
+  {
+    perror("Unable to remove semaphore\n");
     exit(1);
   }
 
