@@ -53,6 +53,8 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
+  printf("Creation and initialization of semaphore #%d successful.\n", semId);
+
   pid = fork();
   if (pid < 0)
   {
@@ -114,6 +116,6 @@ int main(int argc, char *argv[])
     perror("Unable to remove semaphore\n");
     exit(1);
   }
-
+  printf("Cleaning up... Exiting.\n");
   return 0;
 }
