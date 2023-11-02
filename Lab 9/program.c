@@ -6,6 +6,8 @@
 // Global variables
 int globalInitializedVariable = 16;
 int globalUninitializedVariable;
+int globalInitializedVariable2 = 16;
+int globalUninitializedVariable2;
 
 // Recursive function to create objects on the stack
 void createStackObjects(int depth)
@@ -35,6 +37,8 @@ int main()
   printf("Addresses:\n");
   printf("globalInitializedVariable: %p\n", &globalInitializedVariable);
   printf("globalUninitializedVariable: %p\n", &globalUninitializedVariable);
+  printf("globalInitializedVariable2: %p\n", &globalInitializedVariable2);
+  printf("globalUninitializedVariable2: %p\n", &globalUninitializedVariable2);
   createStackObjects(5);
   createHeapObjects(5);
 
