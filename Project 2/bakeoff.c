@@ -74,30 +74,28 @@ void *baker_thread(void *args)
   while (1)
   { // Acquire ingredients from the pantry
     semop(pantrySem, &p, 1);
-    printf("%sbaker %d is in the pantry\n", color, baker);
+    printf("%s[Cookies] baker %d is in the pantry\n", color, baker);
     // grabs Flour and Sugar
     semop(pantrySem, &v, 1);
-    printf("%sbaker %d left the pantry\n", color, baker);
+    printf("%s[Cookies] baker %d left the pantry\n", color, baker);
 
     semop(fridgeSem, &p, 1);
-    printf("%sbaker %d is in the fridge\n", color, baker);
+    printf("%s[Cookies] baker %d is in the fridge\n", color, baker);
     // grabs Milk and Butter
     semop(fridgeSem, &v, 1);
-    printf("%sbaker %d left the fridge\n", color, baker);
+    printf("%s[Cookies] baker %d left the fridge\n", color, baker);
 
     // Acquire utensils
     semop(bowlSem, &p, 1);
     semop(spoonSem, &p, 1);
     semop(mixerSem, &p, 1);
-    printf("%sbaker %d got a bowl, a spoon, and a mixer\n", color, baker);
-    printf("%sbaker %d is mixing ingredients\n", color, baker);
+    printf("%s[Cookies] baker %d got a bowl, a spoon, and a mixer\n", color, baker);
+    printf("%s[Cookies] baker %d is mixing ingredients\n", color, baker);
 
     // Check if you are ramsied on this recipe
     if (ramsied == 1 && ramsiedRecipe == 0)
     {
-      printf("%s------------------------------------------------------------------------\n", color);
-      printf("%sbaker %d got Ramsied\n", color, baker);
-      printf("%s------------------------------------------------------------------------\n", color);
+      printf("%s[Cookies] baker %d got Ramsied\n", color, baker);
 
       ramsied = 0;
       semop(bowlSem, &v, 1);
@@ -108,16 +106,16 @@ void *baker_thread(void *args)
 
     // Use Oven
     semop(ovenSem, &p, 1);
-    printf("%sbaker %d is baking cookies in the oven\n", color, baker);
+    printf("%s[Cookies] baker %d is baking cookies in the oven\n", color, baker);
 
     // give back utensils while baking in the oven
     semop(bowlSem, &v, 1);
     semop(spoonSem, &v, 1);
     semop(mixerSem, &v, 1);
-    printf("%sbaker %d gave back a bowl, a spoon, and a mixer\n", color, baker);
+    printf("%s[Cookies] baker %d gave back a bowl, a spoon, and a mixer\n", color, baker);
 
     semop(ovenSem, &v, 1);
-    printf("%sBaker %d made cookies\n", color, baker);
+    printf("%s[Cookies] Baker %d made cookies\n", color, baker);
     break;
   }
 
@@ -125,25 +123,23 @@ void *baker_thread(void *args)
   while (1)
   {
     semop(pantrySem, &p, 1);
-    printf("%sbaker %d is in the pantry\n", color, baker);
+    printf("%s[Pancake] baker %d is in the pantry\n", color, baker);
     semop(pantrySem, &v, 1);
-    printf("%sbaker %d left the pantry\n", color, baker);
+    printf("%s[Pancake] baker %d left the pantry\n", color, baker);
 
     semop(fridgeSem, &p, 1);
-    printf("%sbaker %d is in the fridge\n", color, baker);
+    printf("%s[Pancake] baker %d is in the fridge\n", color, baker);
     semop(fridgeSem, &v, 1);
-    printf("%sbaker %d left the fridge\n", color, baker);
+    printf("%s[Pancake] baker %d left the fridge\n", color, baker);
 
     semop(bowlSem, &p, 1);
     semop(spoonSem, &p, 1);
     semop(mixerSem, &p, 1);
-    printf("%sbaker %d got a bowl, a spoon, and a mixer\n", color, baker);
-    printf("%sbaker %d is mixing ingredients\n", color, baker);
+    printf("%s[Pancake] baker %d got a bowl, a spoon, and a mixer\n", color, baker);
+    printf("%s[Pancake] baker %d is mixing ingredients\n", color, baker);
     if (ramsied == 1 && ramsiedRecipe == 1)
     {
-      printf("%s------------------------------------------------------------------------\n", color);
-      printf("%sbaker %d got Ramsied\n", color, baker);
-      printf("%s------------------------------------------------------------------------\n", color);
+      printf("%s[Pancake] baker %d got Ramsied\n", color, baker);
 
       ramsied = 0;
       semop(bowlSem, &v, 1);
@@ -152,15 +148,15 @@ void *baker_thread(void *args)
       continue;
     }
     semop(ovenSem, &p, 1);
-    printf("%sbaker %d is baking pancakes in the oven\n", color, baker);
+    printf("%s[Pancake] baker %d is baking pancakes in the oven\n", color, baker);
 
     semop(bowlSem, &v, 1);
     semop(spoonSem, &v, 1);
     semop(mixerSem, &v, 1);
-    printf("%sbaker %d gave back a bowl, a spoon, and a mixer\n", color, baker);
+    printf("%s[Pancake] baker %d gave back a bowl, a spoon, and a mixer\n", color, baker);
 
     semop(ovenSem, &v, 1);
-    printf("%sBaker %d made pancakes\n", color, baker);
+    printf("%s[Pancake] Baker %d made pancakes\n", color, baker);
     break;
   }
 
@@ -168,25 +164,23 @@ void *baker_thread(void *args)
   while (1)
   {
     semop(pantrySem, &p, 1);
-    printf("%sbaker %d is in the pantry\n", color, baker);
+    printf("%s[ Pizza ] baker %d is in the pantry\n", color, baker);
     semop(pantrySem, &v, 1);
-    printf("%sbaker %d left the pantry\n", color, baker);
+    printf("%s[ Pizza ] baker %d left the pantry\n", color, baker);
 
     semop(fridgeSem, &p, 1);
-    printf("%sbaker %d is in the fridge\n", color, baker);
+    printf("%s[ Pizza ] baker %d is in the fridge\n", color, baker);
     semop(fridgeSem, &v, 1);
-    printf("%sbaker %d left the fridge\n", color, baker);
+    printf("%s[ Pizza ] baker %d left the fridge\n", color, baker);
 
     semop(bowlSem, &p, 1);
     semop(spoonSem, &p, 1);
     semop(mixerSem, &p, 1);
-    printf("%sbaker %d got a bowl, a spoon, and a mixer\n", color, baker);
-    printf("%sbaker %d is mixing ingredients\n", color, baker);
+    printf("%s[ Pizza ] baker %d got a bowl, a spoon, and a mixer\n", color, baker);
+    printf("%s[ Pizza ] baker %d is mixing ingredients\n", color, baker);
     if (ramsied == 1 && ramsiedRecipe == 2)
     {
-      printf("%s------------------------------------------------------------------------\n", color);
-      printf("%sbaker %d got Ramsied\n", color, baker);
-      printf("%s------------------------------------------------------------------------\n", color);
+      printf("%s[ Pizza ] baker %d got Ramsied\n", color, baker);
 
       ramsied = 0;
       semop(bowlSem, &v, 1);
@@ -195,40 +189,38 @@ void *baker_thread(void *args)
       continue;
     }
     semop(ovenSem, &p, 1);
-    printf("%sbaker %d is baking pancakes in the oven\n", color, baker);
+    printf("%s[ Pizza ] baker %d is baking pancakes in the oven\n", color, baker);
 
     semop(bowlSem, &v, 1);
     semop(spoonSem, &v, 1);
     semop(mixerSem, &v, 1);
-    printf("%sbaker %d gave back a bowl, a spoon, and a mixer\n", color, baker);
+    printf("%s[ Pizza ] baker %d gave back a bowl, a spoon, and a mixer\n", color, baker);
 
     semop(ovenSem, &v, 1);
-    printf("%sBaker %d made homemade pizza dough\n", color, baker);
+    printf("%s[ Pizza ] Baker %d made homemade pizza dough\n", color, baker);
     break;
   }
   // Baker is making pretzels
   while (1)
   {
     semop(pantrySem, &p, 1);
-    printf("%sbaker %d is in the pantry\n", color, baker);
+    printf("%s[Pretzel] baker %d is in the pantry\n", color, baker);
     semop(pantrySem, &v, 1);
-    printf("%sbaker %d left the pantry\n", color, baker);
+    printf("%s[Pretzel] baker %d left the pantry\n", color, baker);
 
     semop(fridgeSem, &p, 1);
-    printf("%sbaker %d is in the fridge\n", color, baker);
+    printf("%s[Pretzel] baker %d is in the fridge\n", color, baker);
     semop(fridgeSem, &v, 1);
-    printf("%sbaker %d left the fridge\n", color, baker);
+    printf("%s[Pretzel] baker %d left the fridge\n", color, baker);
 
     semop(bowlSem, &p, 1);
     semop(spoonSem, &p, 1);
     semop(mixerSem, &p, 1);
-    printf("%sbaker %d got a bowl, a spoon, and a mixer\n", color, baker);
-    printf("%sbaker %d is mixing ingredients\n", color, baker);
+    printf("%s[Pretzel] baker %d got a bowl, a spoon, and a mixer\n", color, baker);
+    printf("%s[Pretzel] baker %d is mixing ingredients\n", color, baker);
     if (ramsied == 1 && ramsiedRecipe == 3)
     {
-      printf("%s------------------------------------------------------------------------\n", color);
-      printf("%sbaker %d got Ramsied\n", color, baker);
-      printf("%s------------------------------------------------------------------------\n", color);
+      printf("%s[Pretzel] baker %d got Ramsied\n", color, baker);
 
       ramsied = 0;
       semop(bowlSem, &v, 1);
@@ -237,40 +229,38 @@ void *baker_thread(void *args)
       continue;
     }
     semop(ovenSem, &p, 1);
-    printf("%sbaker %d is baking pancakes in the oven\n", color, baker);
+    printf("%s[Pretzel] baker %d is baking pancakes in the oven\n", color, baker);
 
     semop(bowlSem, &v, 1);
     semop(spoonSem, &v, 1);
     semop(mixerSem, &v, 1);
-    printf("%sbaker %d gave back a bowl, a spoon, and a mixer\n", color, baker);
+    printf("%s[Pretzel] baker %d gave back a bowl, a spoon, and a mixer\n", color, baker);
 
     semop(ovenSem, &v, 1);
-    printf("%sBaker %d made soft pretzels\n", color, baker);
+    printf("%s[Pretzel] Baker %d made soft pretzels\n", color, baker);
     break;
   }
   // Baker is making rolls
   while (1)
   {
     semop(pantrySem, &p, 1);
-    printf("%sbaker %d is in the pantry\n", color, baker);
+    printf("%s[Cn Roll] baker %d is in the pantry\n", color, baker);
     semop(pantrySem, &v, 1);
-    printf("%sbaker %d left the pantry\n", color, baker);
+    printf("%s[Cn Roll] baker %d left the pantry\n", color, baker);
 
     semop(fridgeSem, &p, 1);
-    printf("%sbaker %d is in the fridge\n", color, baker);
+    printf("%s[Cn Roll] baker %d is in the fridge\n", color, baker);
     semop(fridgeSem, &v, 1);
-    printf("%sbaker %d left the fridge\n", color, baker);
+    printf("%s[Cn Roll] baker %d left the fridge\n", color, baker);
 
     semop(bowlSem, &p, 1);
     semop(spoonSem, &p, 1);
     semop(mixerSem, &p, 1);
-    printf("%sbaker %d got a bowl, a spoon, and a mixer\n", color, baker);
-    printf("%sbaker %d is mixing ingredients\n", color, baker);
+    printf("%s[Cn Roll] baker %d got a bowl, a spoon, and a mixer\n", color, baker);
+    printf("%s[Cn Roll] baker %d is mixing ingredients\n", color, baker);
     if (ramsied == 1 && ramsiedRecipe == 4)
     {
-      printf("%s------------------------------------------------------------------------\n", color);
-      printf("%sbaker %d got Ramsied\n", color, baker);
-      printf("%s------------------------------------------------------------------------\n", color);
+      printf("[Cn Roll] %sbaker %d got Ramsied\n", color, baker);
 
       ramsied = 0;
       semop(bowlSem, &v, 1);
@@ -279,19 +269,19 @@ void *baker_thread(void *args)
       continue;
     }
     semop(ovenSem, &p, 1);
-    printf("%sbaker %d is baking pancakes in the oven\n", color, baker);
+    printf("%s[Cn Roll] baker %d is baking pancakes in the oven\n", color, baker);
 
     semop(bowlSem, &v, 1);
     semop(spoonSem, &v, 1);
     semop(mixerSem, &v, 1);
-    printf("%sbaker %d gave back a bowl, a spoon, and a mixer\n", color, baker);
+    printf("%s[Cn Roll] baker %d gave back a bowl, a spoon, and a mixer\n", color, baker);
 
     semop(ovenSem, &v, 1);
-    printf("%sBaker %d made cinnamon rolls\n", color, baker);
+    printf("%s[Cn Roll] Baker %d made cinnamon rolls\n", color, baker);
     break;
   }
 
-  printf("%sBaker %d is done!\n", color, baker);
+  printf("%s[Program] Baker %d is done!\n", color, baker);
 
   return NULL;
 }
@@ -398,7 +388,7 @@ int main()
     {
       thread_args[i].color = colors[i % (sizeof(colors) / sizeof(colors[0]))];
     }
-    printf("%sbaker %d created\n", thread_args[i].color, thread_args[i].id + 1);
+    printf("%s[Program] baker %d created\n", thread_args[i].color, thread_args[i].id + 1);
     pthread_create(&threads[i], NULL, baker_thread, &thread_args[i]);
   }
   // Wait for all baker threads to finish
