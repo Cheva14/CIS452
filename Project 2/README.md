@@ -132,16 +132,13 @@ The project consists of the following components:
 - The program can be compiled using either System V or POSIX semaphores, depending on user preference.
 - Compilation command and execution remain consistent regardless of the chosen semaphore type.
 
-`# Compilation with System V semaphores`
-
+Compilation with System V semaphores
 `gcc -o bake bakeoff.c -lpthread`
 
-`# Compilation with POSIX semaphores`
-
+Compilation with POSIX semaphores
 `gcc -o bake bakeoff.c -lpthread -lrt`
 
-`# Execution`
-
+Execution
 `./bake`
 
 ## **Conclusion**
